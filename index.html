@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Key - Tthanh IPA</title>
+  <style>
+    body {
+      background-color: #0f172a;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #container {
+      text-align: center;
+    }
+    button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 28px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <button id="getKey">Get Key</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    const button = document.getElementById('getKey');
+    const status = document.getElementById('status');
+
+    button.addEventListener('click', () => {
+      if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+        status.textContent = 'Vui lòng Get Key trên máy tính!';
+        return;
+      }
+
+      status.textContent = 'Đang kiểm tra PC...';
+      button.disabled = true;
+
+      setTimeout(() => {
+        status.textContent = 'Đang tải chứng chỉ Apple ID...';
+        setTimeout(() => {
+          status.innerHTML = 'Key: <strong>TthanhhubX</strong>';
+          button.disabled = false;
+        }, 2000);
+      }, 2000);
+    });
+  </script>
+</body>
+</html>
