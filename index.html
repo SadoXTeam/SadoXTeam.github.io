@@ -1,169 +1,85 @@
 <!doctype html>
 <html lang="vi">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Nạp thẻ (GitHub Pages) — Demo</title>
-<style>
-  :root { --bg:#f6f8fb; --card:#fff; --accent:#2563eb; }
-  body { font-family: Inter, system-ui, Arial; background:var(--bg); margin:0; color:#111; }
-  .wrap { max-width:720px; margin:36px auto; padding:18px; }
-  .card { background:var(--card); padding:18px; border-radius:10px; box-shadow: 0 8px 30px rgba(12,20,40,0.06); }
-  h1{ margin:0 0 8px;font-size:20px }
-  label{ display:block; margin-top:12px; font-size:13px; color:#333 }
-  input, select, textarea, button { width:100%; padding:10px 12px; margin-top:6px; border-radius:8px; border:1px solid #e6eef8; font-size:14px }
-  .row{ display:flex; gap:8px }
-  .row > *{ flex:1 }
-  .small { font-size:12px; color:#666; margin-top:6px; }
-  .actions{ display:flex; gap:8px; margin-top:12px }
-  .btn { background:var(--accent); color:#fff; border:none; cursor:pointer; padding:10px 14px; border-radius:8px }
-  .btn.secondary { background:#f3f4f6; color:#111; border:1px solid #e5e7eb }
-  pre { background:#0b1220; color:#dbeafe; padding:12px; border-radius:8px; overflow:auto; font-size:13px }
-  .log{ margin-top:12px; padding:12px; border-radius:8px; background:#fbfdff; border:1px dashed #e6eef8; min-height:40px; white-space:pre-wrap; font-size:13px }
-  .hint{ font-size:12px; color:#666; margin-top:8px }
-  form.hidden { display:none }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Share By Tthanh</title>
+  <style>
+    :root{--bg:#0b0f17;--fg:#e6eef8;--accent:#60a5fa}
+    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
+    body{background:radial-gradient(ellipse at center,#071029 0%,var(--bg) 60%);color:var(--fg);display:flex;align-items:center;justify-content:center}
+    .wrap{width:100%;max-width:900px;padding:32px;text-align:center}
+    .brand{font-size:28px;letter-spacing:1px;opacity:0;transition:opacity .6s ease}
+    .brand .typed{display:inline-block}
+    .fade-out{opacity:0;transition:opacity .8s ease}
+    .fade-in{opacity:1}
+    .big{font-size:40px;font-weight:700;margin-bottom:18px}
+    .subtitle{font-size:14px;color:rgba(230,238,248,.75);margin-bottom:28px}
+    .btn-wrap{opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .6s ease}
+    .btn{background:linear-gradient(90deg,var(--accent),#3b82f6);border:none;color:white;padding:14px 22px;border-radius:12px;font-size:16px;cursor:pointer;box-shadow:0 8px 30px rgba(11,15,23,.45)}
+    .btn:active{transform:translateY(1px)}
+    .cursor{display:inline-block;width:8px;height:28px;background:var(--fg);margin-left:6px;vertical-align:middle;opacity:0;animation:blink 1s steps(2) infinite}
+    @keyframes blink{50%{opacity:0}0%,100%{opacity:1}}
+    @media (max-width:480px){.big{font-size:26px}.brand{font-size:22px}}
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card">
-    <h1>Donate - Tthanh</h1>
-    <div class="small">Donate đeee</div>
-
-    <label for="endpoint">.</label>
-    <input id="endpoint" value="https://webhook.site/c357be6f-d2e0-4830-9af6-f29cd9727a06" />
-
-    <label for="provider">Nhà mạng</label>
-    <select id="provider">
-      <option value="VIETTEL">Viettel</option>
-      <option value="MOBIFONE">Mobifone</option>
-      <option value="VINAPHONE">VinaPhone</option>
-      <option value="GARENA">Garena</option>
-    </select>
-
-    <div class="row">
-      <div>
-        <label for="denom">Mệnh giá</label>
-        <select id="denom">
-          <option value="10000">10,000</option>
-          <option value="20000">20,000</option>
-          <option value="50000">50,000</option>
-          <option value="100000">100,000</option>
-          <option value="200000">200,000</option>
-        </select>
-      </div>
-      <div>
-        <label for="phone">lol</label>
-        <input id="phone" placeholder="" />
-      </div>
+  <div class="wrap">
+    <div id="brand" class="brand">
+      <div class="big"><span id="typed" class="typed"></span><span class="cursor" id="cursor"></span></div>
+      <div id="sub" class="subtitle">&nbsp;</div>
     </div>
 
-    <label for="code">Mã thẻ</label>
-    <input id="code" placeholder="Nhập mã thẻ" />
-
-    <label for="serial">Số seri</label>
-    <input id="serial" placeholder="Nhập số seri" />
-
-    <div class="actions">
-      <button id="sendAjax" class="btn">Gửi (AJAX - JSON)</button>
-      <button id="sendForm" class="btn secondary">Gửi (Form POST)</button>
+    <div id="btnWrap" class="btn-wrap" aria-hidden="true">
+      <button id="downloadBtn" class="btn" title="Tải File Win 11 ISO">Tải File Win 11 ISO</button>
     </div>
 
-    <div class="hint">
-      Ghi chú: AJAX sẽ gửi JSON (yêu cầu endpoint hỗ trợ CORS). Form POST gửi dạng urlencoded — an toàn để test với webhook.site.
-    </div>
-
-    <div id="log" class="log">Log sẽ hiển thị ở đây...</div>
-
-    <hr style="margin:16px 0" />
-
-    <h3>Test nhanh: mẫu POST (JSON)</h3>
-    <pre id="sampleJson">{ "provider": "VIETTEL", "denom": "100000", "code": "12345678901234", "serial": "987654321", "phone": "" }</pre>
-
-    <!-- Hidden form (fallback) -->
-    <form id="hiddenForm" class="hidden" method="POST" target="_blank">
-      <input type="text" name="provider" />
-      <input type="text" name="denom" />
-      <input type="text" name="code" />
-      <input type="text" name="serial" />
-      <input type="text" name="phone" />
-    </form>
-
+    <p style="margin-top:18px;color:rgba(230,238,248,.5);font-size:13px">Share By Tthanh</p>
   </div>
-</div>
 
-<script>
-  const endpointInput = document.getElementById('endpoint');
-  const providerInput = document.getElementById('provider');
-  const denomInput = document.getElementById('denom');
-  const codeInput = document.getElementById('code');
-  const serialInput = document.getElementById('serial');
-  const phoneInput = document.getElementById('phone');
-  const logEl = document.getElementById('log');
-  const sampleJson = document.getElementById('sampleJson');
-  const hiddenForm = document.getElementById('hiddenForm');
+  <script>
+    const text = 'Tthanhhub - Window 11';
+    const typedEl = document.getElementById('typed');
+    const cursor = document.getElementById('cursor');
+    const brand = document.getElementById('brand');
+    const btnWrap = document.getElementById('btnWrap');
+    const downloadBtn = document.getElementById('downloadBtn');
 
-  function setLog(t){ logEl.textContent = (new Date()).toLocaleString() + ' — ' + t; }
-  function appendLog(t){ logEl.textContent += '\\n' + (new Date()).toLocaleString() + ' — ' + t; }
+    const typeSpeed = 80;
+    const pauseAfter = 900;
+    const fadeOutDelay = 500;
 
-  function buildPayload(){
-    return {
-      provider: providerInput.value,
-      denom: denomInput.value,
-      code: codeInput.value.trim(),
-      serial: serialInput.value.trim(),
-      phone: phoneInput.value.trim()
-    };
-  }
-
-  function updateSample(){
-    sampleJson.textContent = JSON.stringify(buildPayload(), null, 2);
-  }
-
-  // Update sample on change
-  [providerInput, denomInput, codeInput, serialInput, phoneInput].forEach(el => el.addEventListener('input', updateSample));
-
-  document.getElementById('sendAjax').addEventListener('click', async () => {
-    const url = endpointInput.value.trim();
-    if(!url){ setLog('Vui lòng nhập endpoint'); return; }
-    const payload = buildPayload();
-    updateSample();
-    setLog('Đang gửi JSON tới ' + url + ' ...');
-
-    try{
-      const resp = await fetch(url, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(payload)
-      });
-
-      const text = await resp.text();
-      appendLog('HTTP ' + resp.status + ' — ' + (text.length>800 ? text.slice(0,800)+'... (truncated)' : text));
-      // nếu response là JSON, hiển thị đẹp:
-      try { const j = JSON.parse(text); appendLog('Response JSON: ' + JSON.stringify(j, null, 2)); } catch(e){}
-    } catch (err) {
-      appendLog('Lỗi gửi AJAX: ' + err.message + '\\n(Chú ý: endpoint phải cho phép CORS nếu gửi từ GitHub Pages)');
+    async function typeText(str){
+      for(let i=0;i<str.length;i++){
+        typedEl.textContent += str[i];
+        cursor.style.opacity = '1';
+        await new Promise(r => setTimeout(r, typeSpeed));
+      }
+      await new Promise(r => setTimeout(r, pauseAfter));
     }
-  });
 
-  document.getElementById('sendForm').addEventListener('click', () => {
-    const url = endpointInput.value.trim();
-    if(!url){ setLog('Vui lòng nhập endpoint'); return; }
-    const payload = buildPayload();
-    // set hidden form action -> open in new tab so you can inspect webhook.site
-    hiddenForm.action = url;
-    hiddenForm.provider.value = payload.provider;
-    hiddenForm.denom.value = payload.denom;
-    hiddenForm.code.value = payload.code;
-    hiddenForm.serial.value = payload.serial;
-    hiddenForm.phone.value = payload.phone;
-    hiddenForm.submit();
-    setLog('Đã submit form POST tới ' + url + ' (mở tab mới)');
-  });
+    (async function sequence(){
+      brand.style.opacity = '1';
+      await typeText(text);
+      await new Promise(r => setTimeout(r, fadeOutDelay));
+      typedEl.style.transition = 'opacity .8s ease';
+      cursor.style.transition = 'opacity .6s ease';
+      typedEl.style.opacity = '0';
+      cursor.style.opacity = '0';
+      setTimeout(()=>{
+        brand.classList.add('fade-out');
+        btnWrap.style.opacity = '1';
+        btnWrap.style.transform = 'translateY(0)';
+        btnWrap.setAttribute('aria-hidden','false');
+      },800);
+    })();
 
-  // initial sample
-  updateSample();
-  setLog('Sẵn sàng. Endpoint mặc định là webhook.site; thay nếu muốn gửi tới server khác.');
-</script>
+    document.title = 'Share By Tthanh';
+
+    downloadBtn.addEventListener('click', ()=>{
+      const url = 'https://software.download.prss.microsoft.com/dbazure/Win11_25H2_English_x64.iso?t=a5345e4e-49e8-4946-b6fe-dd40d7bcf63e&P1=1761634603&P2=601&P3=2&P4=dpvXfGOt7Za3fBEbm7OX9pRV4xjIiAW7REsq5t%2fLHMJ3V4I%2fAIjhg4WkLzaZSsPdLpDE8tP7DztbJTSDXI2ucLa0diIgYK%2fjVRK5%2bbPJZCyK0%2bK3OUOg%2fx0w8X6yWwXAf%2f7pul04z04x9%2bBkxq%2fCEb0An56YMD%2bZywBTNDDz1t8AnZ%2bEal3dhpU6hGpO0tj2yDcaJS9EeBT9kmVKFQ54hNqEoCAtQIkaiuStCuvNSXueVy9qjV76lTrQfJHLrbC7ZLLNqj%2b0KIoFcV7BSes072SOJOkb%2bfe1Qje9%2bv4ZP7nXp2Y%2foLBLuR82Kl6I2EBMWqmN%2f9jr4A%2fTGfc3RBjRKA%3d%3d';
+      window.location.href = url;
+    });
+  </script>
 </body>
 </html>
